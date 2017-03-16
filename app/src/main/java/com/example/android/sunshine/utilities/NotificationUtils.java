@@ -141,7 +141,6 @@ public class NotificationUtils {
 
             /* WEATHER_NOTIFICATION_ID allows you to update or cancel the notification later on */
             notificationManager.notify(WEATHER_NOTIFICATION_ID, notificationBuilder.build());
-            sendToWear(context,largeIcon,high,low);
 
             /*
              * Since we just showed a notification, save the current time. That way, we can check
@@ -188,62 +187,4 @@ public class NotificationUtils {
 
         return notificationText;
     }
-
-    private static void sendToWear(Context context, Bitmap largeIcon, double high, double low){
-
-        final GoogleApiClient mGoogleApiClient;
-
-
-
-        final String WEATHER_PATH = "/send-data";
-        final String HIGH_TEMP_KEY= "high_temp_key";
-        final String LOW_TEMP_KEY = "low_temp_key";
-        final String ICON_KEY = "icon_key";
-
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-
-                    }
-                }).build();
-
-        mGoogleApiClient.connect();
-
-        Asset asset = createAssetFromBitmap(largeIcon);
-
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(WEATHER_PATH);
-        putDataMapRequest.setUrgent();
-        putDataMapRequest.getDataMap().putString(HIGH_TEMP_KEY, SunshineWeatherUtils.formatTemperature(context, high));
-        putDataMapRequest.getDataMap().putString(LOW_TEMP_KEY, SunshineWeatherUtils.formatTemperature(context, low));
-        putDataMapRequest.getDataMap().putAsset(ICON_KEY, asset);
-        putDataMapRequest.getDataMap().putLong("timestamp", System.currentTimeMillis());
-
-        PutDataRequest request = putDataMapRequest.asPutDataRequest();
-        Wearable.DataApi.putDataItem(mGoogleApiClient, request).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-            @Override
-            public void onResult(DataApi.DataItemResult dataItemResult) {
-                if (dataItemResult.getStatus().isSuccess()) {
-                    Log.e("Watch Log", "Successfully send weather info");
-                } else {
-                    Log.e("Watch Log", "Failed to send weather info ");
-                }
-                mGoogleApiClient.disconnect();
-            }
-        });
-    }
-
-    private static Asset createAssetFromBitmap(Bitmap bitmap) {
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-        return Asset.createFromBytes(byteStream.toByteArray());
-    }
 }
-
-

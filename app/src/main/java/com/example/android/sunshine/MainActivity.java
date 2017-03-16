@@ -251,7 +251,7 @@ public void sendDataToWear()
         mForecastAdapter.swapCursor(data);
         if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
         mRecyclerView.smoothScrollToPosition(mPosition);
-        if (data.getCount() != 0) showWeatherDataView();
+         if (data.getCount() != 0) showWeatherDataView();
     }
 
     /**

@@ -217,6 +217,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
          /* Read high temperature from the cursor (in degrees celsius) */
         double highInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MAX_TEMP);
          /*
+
           * If the user's preference for weather is fahrenheit, formatTemperature will convert
           * the temperature. This method will also append either °C or °F to the temperature
           * String.
@@ -245,28 +246,6 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
          /* Set the text and content description (for accessibility purposes) */
         forecastAdapterViewHolder.lowTempView.setText(lowString);
         forecastAdapterViewHolder.lowTempView.setContentDescription(lowA11y);
-        PutDataMapRequest putDataMapRequest=PutDataMapRequest.create("/send-data");
-        putDataMapRequest.getDataMap().putString("date",dateString);
-        putDataMapRequest.getDataMap().putString("description",description);
-        putDataMapRequest.getDataMap().putString("highTemp",highString);
-        putDataMapRequest.getDataMap().putString("lowTemp",lowString);
-        PutDataRequest request=putDataMapRequest.asPutDataRequest();
-        Wearable.DataApi.putDataItem(googleApiClient,request)
-                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                    @Override
-                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-                        if(!dataItemResult.getStatus().isSuccess())
-                        {
-System.out.println("failed");
-                        }
-                        else
-                        {
-
-                            System.out.println("passed");
-                        }
-                    }
-                });
-
 
 
     }
